@@ -1,0 +1,10 @@
+datasets==2.12.0
+pandas==2.0.2
+scikit-learn==1.2.2
+numpy==1.24.3
+adapter-transformers==3.0.0
+transformers==4.29.2
+torch==2.0.1
+gensim
+sentence-transformers==2.2.2
+pymystem3
