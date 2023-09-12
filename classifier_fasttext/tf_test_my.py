@@ -3,6 +3,7 @@ import pandas as pd
 import fasttext
 from random import shuffle
 from texts_processing import TextsTokenizer
+from sklearn.metrics import confusion_matrix
 from config import PATH
 
 
@@ -21,14 +22,34 @@ for x in test_dataset:
         
 model = fasttext.load_model(os.path.join(PATH, "models", "techsupport.model"))
 
+print(model.get_labels())
+unique_labels = {lb: num for num, lb in enumerate(model.get_labels())}
+print(unique_labels, len(unique_labels))
+
 true = 0
 false = 0
-for lb, text in test_data[:100]:
+y_true = []
+y_predict = []
+for lb, text in test_data:
     pred = model.predict(text, k=1)
+    if pred[0][0] not in unique_labels:
+        unique_labels[pred[0][0]] = len(unique_labels)
+        print(unique_labels)
+    if lb  not in unique_labels:
+        unique_labels[lb] = len(unique_labels)
+        print(unique_labels)
+    try:
+        y_true.append(unique_labels[lb])
+        y_predict.append(unique_labels[pred[0][0]])
+    except:
+        pass
+        # print("can't add label:", lb, "or", pred[0][0])
     if lb == pred[0][0]:
         true += 1
     else:
         false += 1
-    print(lb, pred[0][0], pred[1][0])
+    # print(lb, pred[0][0], pred[1][0])
 
 print("true:", true, "false:", false)
+cm = confusion_matrix(y_true, y_predict)
+print(cm)
