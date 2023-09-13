@@ -9,7 +9,7 @@ from transformers import (BertTokenizer,
                           TrainingArguments,
                           AdapterTrainer,
                           EvalPrediction)
-from classifier_fasttext.config import PATH
+from config import PATH
 # import torch
 
 model_name = "bert-base-multilingual-cased"

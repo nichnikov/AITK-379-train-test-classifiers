@@ -1,9 +1,9 @@
 import os
 from datasets import Dataset, DatasetDict
 import pandas as pd
-from classifier_fasttext.config import PATH
+from config import PATH
 
-queries_df = pd.read_csv(os.path.join(PATH, "data", "trained_queries.csv"), sep="\t")
+queries_df = pd.read_csv(os.path.join(PATH, "data", "train_dataset_lb2int.csv"), sep="\t")
 print(queries_df)
 
 dtset = Dataset.from_pandas(queries_df)
