@@ -3,7 +3,10 @@
 import os
 import json
 import numpy as np
-from datasets import DatasetDict
+from datasets import Dataset, DatasetDict
+import pandas as pd
+from transformers import __version__
+print(__version__)
 from transformers import (BertTokenizer,
                           BertModelWithHeads,
                           TrainingArguments,
@@ -11,6 +14,7 @@ from transformers import (BertTokenizer,
                           EvalPrediction)
 from config import PATH
 # import torch
+
 
 model_name = "bert-base-multilingual-cased"
 adapter_name = "classifier_adapter"
@@ -34,8 +38,13 @@ def compute_accuracy(p: EvalPrediction):
     preds = np.argmax(p.predictions, axis=1)
     return {"acc": (preds == p.label_ids).mean()}
 
+queries_df = pd.read_csv(os.path.join(PATH, "data", "train_dataset_lb2int.csv"), sep="\t")
+print(queries_df)
 
-dataset = DatasetDict.load_from_disk(os.path.join(PATH, "data", "train.data"))
+dtset = Dataset.from_pandas(queries_df)
+dataset = DatasetDict({"train": dtset})
+
+# dataset = DatasetDict.load_from_disk(os.path.join(PATH, "data", "train.data"))
 print(dataset)
 
 dataset = dataset.map(encode_batch, batched=True)
