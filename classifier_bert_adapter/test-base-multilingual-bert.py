@@ -12,15 +12,14 @@ import torch
 
 
 def predict(hypothesis):
-  encoded = tokenizer(hypothesis, max_length=512, return_tensors="pt")
-  # if torch.cuda.is_available():
-  #  encoded.to("cuda")
+  encoded = tokenizer(hypothesis, max_length=512, return_tensors="pt").to('cuda:0')
+  model.to('cuda:0')
+  
   logits = model(**encoded)[0]
-  tanh = torch.tanh(logits)
+  
   pred_class = torch.argmax(logits).item()
-  # print("sigmoid:", torch.sigmoid(logits))
-  return pred_class
-
+  score = torch.sigmoid(logits).max().item()
+  return pred_class, score
 
 
 lematizer = TextsTokenizer()
@@ -31,7 +30,6 @@ model = BertModelWithHeads.from_pretrained(model_name)
 
 adapter_name = "classifier_adapter"
 
-# adapter_path = os.path.join(os.getcwd(), "models", mode_name)
 adapter_path = os.path.join(os.getcwd(), "models", adapter_name)
 model.load_adapter(adapter_path)
 model.set_active_adapters(adapter_name)
@@ -51,11 +49,12 @@ results = []
 true_pred = 0
 not_other_pred = 0
 k = 1
-for true_label, text, tag in test_data:
-    prd_label = predict(text)
+for true_label, text, tag in test_data[:1000]:
+    prd_label, pred_score = predict(text)
     results.append({"Query": text, 
                     "predict_lb": prd_label,
                     "predict_tag": lbs_dict[prd_label],
+                    "score": pred_score,
                     "true_lb": true_label,
                     "true_tag": tag})
     print(k, "/", len(test_data), "predict:", prd_label, "true:", true_label)
@@ -63,4 +62,4 @@ for true_label, text, tag in test_data:
 
 results_df = pd.DataFrame(results)
 print(results_df)
-results_df.to_csv(os.path.join(os.getcwd(), "results", "results_bert_adapter_classifier.csv"), sep="\t", index=False)
+results_df.to_csv(os.path.join(os.getcwd(), "results", "results_bert_adapter_classifier1000.csv"), sep="\t", index=False)
