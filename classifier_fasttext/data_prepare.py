@@ -2,12 +2,10 @@ import os
 import pandas as pd
 from random import shuffle
 from texts_processing import TextsTokenizer
-from config import PATH
-
 
 # подготовка данных для обучения
 tokenizer = TextsTokenizer()
-dataset_df = pd.read_csv(os.path.join(PATH, "data", "train_dataset.csv"), sep="\t")
+dataset_df = pd.read_csv(os.path.join(os.getcwd(), "data", "train_dataset.csv"), sep="\t")
 print(dataset_df)
 
 train_dataset = list(dataset_df.itertuples(index=False))
@@ -19,6 +17,6 @@ for x in train_dataset:
 
 shuffle(train_data)
 
-with open(os.path.join(PATH, "data", "train_data.txt"), "w", encoding="utf-8") as f:
+with open(os.path.join(os.getcwd(), "data", "train_data.txt"), "w", encoding="utf-8") as f:
     for ln in train_data:
         f.write(str(ln) + "\n")

@@ -1,7 +1,7 @@
 import os
 import fasttext
 import random
-from config import PATH
+
 
 def train_test_split_file(input_path: str,
                           output_path_train: str,
@@ -48,7 +48,7 @@ def prepend_file_name(path: str, name: str) -> str:
 if __name__ == "__main__":
     data_dir = 'data'
     test_size = 0.2
-    input_path = os.path.join(PATH, data_dir, 'train_data.txt')
+    input_path = os.path.join(os.getcwd(), data_dir, 'train_data.txt')
     input_path_train = prepend_file_name(input_path, 'train')
     input_path_test = prepend_file_name(input_path, 'test')
     random_state = 1234
@@ -71,14 +71,14 @@ if __name__ == "__main__":
     }
     
     model = fasttext.train_supervised(**fasttext_params)
-    model.save_model(os.path.join(PATH, "models", "techsupport.model"))
+    model.save_model(os.path.join(os.getcwd(), "models", "techsupport.model"))
 
     print('vocab size: ', len(model.words))
     print('label size: ', len(model.labels))
     print('example vocab: ', model.words[:5])
     print('example label: ', model.labels[:5])
 
-    model = fasttext.load_model(os.path.join(PATH, "models", "techsupport.model"))
+    model = fasttext.load_model(os.path.join(os.getcwd(), "models", "techsupport.model"))
     text = 'не работать удаление отправление в батч пример батч'
     pred = model.predict(text, k=1)
     print(pred)
